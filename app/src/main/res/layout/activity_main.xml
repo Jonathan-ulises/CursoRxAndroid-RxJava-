@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:text="Introduccion"
+                android:textSize="18sp"
+                android:id="@+id/btnRX00Introduccion" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:text="Disposable"
+                android:textSize="18sp"
+                android:id="@+id/btnRX01Disposable" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:text="Composite Disposanle"
+                android:textSize="18sp"
+                android:id="@+id/btnRX02CompositeDisposable" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:text="Operadores"
+                android:textSize="18sp"
+                android:id="@+id/btnRX02Operadores" />
+        </LinearLayout>
+
+    </ScrollView>
+</layout>
