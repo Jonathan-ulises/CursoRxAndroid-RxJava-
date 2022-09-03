@@ -39,7 +39,9 @@ public class RX03OperadoresActivity extends AppCompatActivity {
         //probarRepeat();
         //probarInterval();
         //probarCreate();
-        probarCreateException();
+        //probarCreateException();
+        //probarCreateLargaDuracion();
+        probarCreateLargaDuracionLambda();
 
     }
 
@@ -306,6 +308,89 @@ public class RX03OperadoresActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    private String largaDuracion() {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "Terminado";
+    }
+
+    private void probarCreateLargaDuracion() {
+        Log.d("TAG1", "---------------- CREATE LARGA DURACION-------------------");
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String> emitter) throws Throwable {
+                try {
+                    emitter.onNext(largaDuracion());
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        new Observer<String>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(@NonNull String s) {
+                                Log.d("TAG1", "CREATE LARGA DURACION -> onNext: " + s);
+
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                Log.d("TAG1", "CREATE LARGA DURACION -> onError: " + e.getMessage());
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        }
+                );
+    }
+
+    // USO INTERFACE NORMAL
+    Sumar sumer = new Sumar() {
+        @Override
+        public int apply(int a, int b) {
+            int resultado;
+            resultado = a + b;
+            return resultado;
+        }
+    };
+
+    // USO INTERFACE LAMBDA
+    Sumar sumarL = (a, b) -> a + b;
+    Disposable disposableLmd;
+    private void probarCreateLargaDuracionLambda() {
+        Log.d("TAG1", "---------------- CREATE LARGA DURACION (LAMBDA)-------------------");
+        Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            try {
+                emitter.onNext(largaDuracion());
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        s -> Log.d("TAG1", "CREATE LARGA DURACION -> onNext: " + s),
+                        e -> Log.d("TAG1", "CREATE LARGA DURACION -> onError: " + e.getMessage()),
+                        () -> Log.d("TAG1", "onComplete")
+                );
+    }
+
+    private void probarLambda() {
+
     }
 
     @Override
