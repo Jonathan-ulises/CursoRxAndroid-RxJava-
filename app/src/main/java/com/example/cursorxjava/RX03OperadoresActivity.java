@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.cursorxjava.databinding.ActivityRx03OperadoresBinding;
+import com.jakewharton.rxbinding4.widget.RxTextView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -19,10 +22,13 @@ import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.BiFunction;
 import io.reactivex.rxjava3.functions.Function;
+import io.reactivex.rxjava3.functions.Predicate;
 import io.reactivex.rxjava3.observables.GroupedObservable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RX03OperadoresActivity extends AppCompatActivity {
+
+    ActivityRx03OperadoresBinding bind;
 
     private Disposable disposableJust;
     private Disposable disposableJustArray;
@@ -36,7 +42,8 @@ public class RX03OperadoresActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rx03_operadores);
+        bind = ActivityRx03OperadoresBinding.inflate(getLayoutInflater());
+        setContentView(bind.getRoot());
 
         //* OPERADORES QUE CREAN OBSERVABLES
         //probarJust();
@@ -53,7 +60,15 @@ public class RX03OperadoresActivity extends AppCompatActivity {
         //probarMap();
         //probarFlatMap();
         //probarGroupBy();
-        probarScan();
+        //probarScan();
+        //probarWindow();
+
+        //* OPERADORES QUE SELECTIVAMENTE EMITEN ITEM DE UN OBSERVABLE
+        //probarDebounce();
+        //probarDistinc();
+        //probarElementAt();
+        //probarFilter();
+        probarFirst();
     }
 
     /*
@@ -629,6 +644,91 @@ public class RX03OperadoresActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         next -> Log.d("TAG1", "SCAN -> onNext: " + next)
+                );
+    }
+
+    /*
+    Subdivide los item de un observable en una venta (observable) que pueden emitir los items.
+     */
+    private void probarWindow() {
+        Log.d("TAG1", "---------------- WINDOW -------------------");
+        Observable<Observable<Integer>> observableObservable = Observable
+                .range(1, 150)
+                .window(3);
+        observableObservable
+                .subscribe(
+                        e -> {
+                            Log.d("TAG1", "siguiente Ventana");
+                            e.subscribe(
+                                            n -> Log.d("TAG1", "item en ventana: " + n)
+                                    );
+                        }
+                );
+    }
+
+//    private void probarDebounce() {
+//        Log.d("TAG1", "---------------- WINDOW -------------------");
+//        Observable<String> observable = (Observable<String>) RxTextView.textChanges(bind.etQuery)
+//                .debounce(500, TimeUnit.MILLISECONDS)
+//                .map(e -> e.toString())
+//                .subscribe(
+//                        e -> {
+//                            Log.d("TAG1", "onNext -> String de busqueda: " + e);
+//                            bind.tvQuery.setText("Query: " + e);
+//                        }
+//                );
+//    }
+
+    /*
+    Emite los valores eliminando items repetidos
+     */
+    private void probarDistinc() {
+        Log.d("TAG1", "---------------- DISTINCT -------------------");
+        Observable<Integer> numeroObservable = Observable.just(1,2,3,4,2,2,2,2,3,1);
+        numeroObservable
+                .distinct()
+                .subscribe(
+                        e -> Log.d("TAG1", "DISTINCT -> onNext: " + e)
+                );
+    }
+
+    private void probarElementAt() {
+        Log.d("TAG1", "---------------- ELEMENTAT -------------------");
+        Observable<Integer> numeroObservable = Observable.just(1,2,3,4,2,2,2,2,3,1);
+        numeroObservable.elementAt(7)
+                .subscribe(
+                        e -> Log.d("TAG1", "ELEMENTAT -> onNext: " + e)
+                );
+    }
+
+    private void probarFilter() {
+        Log.d("TAG1", "---------------- FILTER -------------------");
+        Observable<Integer> numeroObservable = Observable.just(1,2,3,4,2,2,2,2,3,1);
+//        numeroObservable
+//                .filter(new Predicate<Integer>() {
+//                    @Override
+//                    public boolean test(Integer integer) throws Throwable {
+//                        return integer % 2 == 0;
+//                    }
+//                })
+//                .subscribe(
+//                        e -> Log.d("TAG1", "FILTER -> onNext: " + e)
+//                );
+
+        numeroObservable
+                .filter(integer -> integer % 2 == 0)
+                .subscribe(
+                        e -> Log.d("TAG1", "FILTER -> onNext: " + e)
+                );
+    }
+
+    private void probarFirst() {
+        Log.d("TAG1", "---------------- FIRST -------------------");
+        Observable<Integer> numeroObservable = Observable.just(1,2,3,4,2,2,2,2,3,1);
+        numeroObservable
+                .first(0)
+                .subscribe(
+                        e -> Log.d("TAG1", "FIRST -> onNext: " + e)
                 );
     }
 
